@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
+<title>сказочки будут вечно</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+<style>
+    body {
+    background: #2a2422;
+    }
+</style>
+</head>
+<body>
+
+<div id="ui">
+  <div id="title-bar">
+    <h1>чувства давно остынут, сказочки будут вечно</h1>
+    <span id="quote">c. Мглистый заповедник</span>
+  </div>
+  <div id="controls">
+    <a class="btn" href="./feelings_fade.html">Создать дата-арт</a>
+    <div class="sep"></div>
+    <a class="btn_active">О проекте</a>
+  </div>
+</div>
+
+
+<div class="container">
+  <h2>Как создается визуализация:</h2>
+
+  <div class="demo-section">
+
+    <!-- ── Legend ── -->
+    <div class="legend">
+      <div class="legend-group">
+        <h3>Главные, ь и ъ — изменяют цвет</h3>
+        <div class="legend-rows">
+          <div class="legend-row">
+            <span class="legend-key">А</span>
+            <div class="legend-swatch" style="background: hsl(272, 60%, 74%)"></div>
+            <span class="legend-label">лавандовый</span>
+          </div>
+          <div class="legend-row">
+            <span class="legend-key">Е</span>
+            <div class="legend-swatch" style="background: hsl(142,70%,52%)"></div>
+            <span class="legend-label">зеленый</span>
+          </div>
+          <div class="legend-row">
+            <span class="legend-key">Ё</span>
+            <div class="legend-swatch" style="background: hsl(150,67%,72%)"></div>
+            <span class="legend-label">светло-зеленый</span>
+          </div>
+          <div class="legend-row">
+            <span class="legend-key">И</span>
+            <div class="legend-swatch" style="background: hsl(210,80%,65%)"></div>
+            <span class="legend-label">голубой</span>
+          </div>
+          <div class="legend-row">
+            <span class="legend-key">О</span>
+            <div class="legend-swatch" style="background: hsl(35, 100%, 56%)"></div>
+            <span class="legend-label">оранжевый</span>
+          </div>
+          <div class="legend-row">
+            <span class="legend-key">У</span>
+            <div class="legend-swatch" style="background: hsl(49, 89%, 60%)"></div>
+            <span class="legend-label">желтый</span>
+          </div>
+          <div class="legend-row">
+            <span class="legend-key">Ы</span>
+            <div class="legend-swatch" style="background: hsl(218,77%,42%)"></div>
+            <span class="legend-label">синий</span>
+          </div>
+          <div class="legend-row">
+            <span class="legend-key">Э</span>
+            <div class="legend-swatch" style="background: hsl(355,78%,62%)"></div>
+            <span class="legend-label">караловый</span>
+          </div>
+          <div class="legend-row">
+            <span class="legend-key">Ю</span>
+            <div class="legend-swatch" style="background: hsl(0,95%,47%)"></div>
+            <span class="legend-label">красный</span>
+          </div>
+          <div class="legend-row">
+            <span class="legend-key">Я</span>
+            <div class="legend-swatch" style="background: hsl(301, 59%, 60%)"></div>
+            <span class="legend-label">розовый</span>
+          </div>
+          <div class="legend-row">
+            <span class="legend-key">Ь</span>
+            <div class="legend-swatch" style="background: hsl(0,100%,100%)"></div>
+            <span class="legend-label">белый</span>
+          </div>
+          <div class="legend-row">
+            <span class="legend-key">Ъ</span>
+            <div class="legend-swatch" style="background: hsl(0,0%,56%)"></div>
+            <span class="legend-label">серый</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="legend-group">
+        <h3>Согласные — рисуют узор</h3>
+        <div class="consonants-grid">
+          <div class="consonant-item">
+            <span class="legend-key">Б</span><span class="legend-label">взрыв</span>
+          </div>
+          <div class="consonant-item">
+            <span class="legend-key">В</span><span class="legend-label">вуаль</span>
+          </div>
+          <div class="consonant-item">
+            <span class="legend-key">Г</span><span class="legend-label">сетка</span>
+          </div>
+          <div class="consonant-item">
+            <span class="legend-key">Д</span><span class="legend-label">точки</span>
+          </div>
+          <div class="consonant-item">
+            <span class="legend-key">Ж</span><span class="legend-label">волна</span>
+          </div>
+          <div class="consonant-item">
+            <span class="legend-key">З</span><span class="legend-label">зигзаг</span>
+          </div>
+          <div class="consonant-item">
+            <span class="legend-key">Й</span><span class="legend-label">мазки</span>
+          </div>
+          <div class="consonant-item">
+            <span class="legend-key">К</span><span class="legend-label">кубики</span>
+          </div>
+          <div class="consonant-item">
+            <span class="legend-key">Л</span><span class="legend-label">линии</span>
+          </div>
+          <div class="consonant-item">
+            <span class="legend-key">М</span><span class="legend-label">мандала</span>
+          </div>
+          <div class="consonant-item">
+            <span class="legend-key">Н</span><span class="legend-label">узлы</span>
+          </div>
+          <div class="consonant-item">
+            <span class="legend-key">П</span><span class="legend-label">цветок</span>
+          </div>
+          <div class="consonant-item">
+            <span class="legend-key">Р</span><span class="legend-label">кольца</span>
+          </div>
+          <div class="consonant-item">
+            <span class="legend-key">С</span><span class="legend-label">спираль</span>
+          </div>
+          <div class="consonant-item">
+            <span class="legend-key">T</span><span class="legend-label">орбита</span>
+          </div>
+          <div class="consonant-item">
+            <span class="legend-key">Ф</span><span class="legend-label">веер</span>
+          </div>
+          <div class="consonant-item">
+            <span class="legend-key">Х</span><span class="legend-label">крестик</span>
+          </div>
+          <div class="consonant-item">
+            <span class="legend-key">Ц</span><span class="legend-label">капли</span>
+          </div>
+          <div class="consonant-item">
+            <span class="legend-key">Ч</span><span class="legend-label">штриховка</span>
+          </div>
+          <div class="consonant-item">
+            <span class="legend-key">Ш</span><span class="legend-label">забор</span>
+          </div>
+          <div class="consonant-item">
+            <span class="legend-key">Щ</span><span class="legend-label">забор</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="legend-group">
+        <h3>Дополнительно</h3>
+        <div class="legend-rows">
+          <div class="legend-row">
+            <span class="legend-label">Рифмы создают эффекты эха при повторении конечных звуков.</span>
+          </div>
+          <div class="legend-row">
+            <span class="legend-label">Ритм определяет скорость анимации.</span>
+          </div>
+          <div class="legend-row" style="margin-top:6px">
+            <span class="legend-label">Все рисунки со временем затухают — остается только текс</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── Live demo canvas ── -->
+    <div class="canvas-wrap">
+      <div id="demo-canvas-container"></div>
+      <div class="input-row">
+        <span class="input-prompt">введи текст →</span>
+        <input id="demo-input" type="text" autocomplete="off" spellcheck="false"
+              placeholder="start typing to see the patterns…">
+        <button class="clear-btn" id="clear-btn">отчистить</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- /.demo-section -->
+
+<script>
+// ─── Vowel palettes & consonant pattern map (same as main project) ───────────
+
+const VOWEL_PALETTES = {
+  'а': { h: 272, s: 60, l: 74 },  // лавандовый
+  'е': { h: 142, s: 70, l: 52 },  // зеленый
+  'ё': { h: 150, s: 67, l: 72 },  // зеленый
+  'и': { h: 210, s: 80, l: 65 },  // голубой
+  'о': { h: 35,  s: 100, l: 56 },  // оранжевый
+  'у': { h: 49, s: 89, l: 60 },  // желтый
+  'ы': { h: 218, s: 77, l: 42 },  // темно синий
+  'э': { h: 355, s: 78, l: 62 },  // караловый
+  'ю': { h: 0, s: 95, l: 47 },  // красный
+  'я': { h: 301, s: 59, l: 60 },  // розовый
+  'ь': { h: 0, s: 100, l: 100 },  // белый
+  'ъ': { h: 0, s: 0, l: 56 },  // серый
+};
+
+const CONSONANT_PATTERNS = {
+  'б': 'burst', 'в': 'veil', 'г': 'grid',
+  'д': 'dots', 'з': 'zigzag', 'й': 'aurora',
+  'к': 'kite', 'л': 'lines', 'м': 'mandala',
+  'н': 'nodes', 'п': 'petals', 'р': 'rings',
+  'с': 'spiral', 'т': 'orbit', 'ф': 'fan',
+  'х': 'cross', 'ц': 'stream', 'ч': 'hatch',
+  'ш': 'ticks', 'ж': 'wave', 'щ': 'ticks',
+};
+
+// ─── p5 instance sketch ───────────────────────────────────────────────────────
+let demoSketch = function(p) {
+  const W = 570, H = 300;
+  let particles = [];
+  let currentHSL = { h: 45, s: 70, l: 65 };
+  let targetHSL  = { h: 45, s: 70, l: 65 };
+
+  p.setup = function() {
+    let cnv = p.createCanvas(W, H);
+    cnv.parent('demo-canvas-container');
+    p.colorMode(p.HSL, 360, 100, 100, 100);
+    p.background(8, 8, 12);
+  };
+
+  p.draw = function() {
+    // Slow fade — the core visual metaphor
+    p.fill(8, 8, 12, 8);
+    p.noStroke();
+    p.rect(0, 0, W, H);
+
+    // Lerp colour
+    currentHSL.h = lerpAngle(currentHSL.h, targetHSL.h, 0.05);
+    currentHSL.s = p.lerp(currentHSL.s, targetHSL.s, 0.05);
+    currentHSL.l = p.lerp(currentHSL.l, targetHSL.l, 0.05);
+
+    for (let i = particles.length - 1; i >= 0; i--) {
+      particles[i].update();
+      particles[i].draw();
+      if (particles[i].dead()) particles.splice(i, 1);
+    }
+  };
+
+  // Public: called when a character is typed
+  p.onChar = function(ch) {
+    ch = ch.toLowerCase();
+    let x = p.random(W * 0.15, W * 0.85);
+    let y = p.random(H * 0.2,  H * 0.8);
+
+    if ('аеёиоуыэюяьъ'.includes(ch)) {
+      let pal = VOWEL_PALETTES[ch];
+      targetHSL = { ...pal };
+      spawnVowelBloom(x, y);
+    } else {
+      let pType = CONSONANT_PATTERNS[ch] || 'scatter';
+      spawnPattern(x, y, pType);
+    }
+  };
+
+  p.clearCanvas = function() {
+    particles = [];
+    p.background(8, 8, 12);
+  };
+
+  // ── Spawn helpers ────────────────────────────────────────────────────────────
+  function col() { return { ...targetHSL }; }
+
+  function spawnVowelBloom(x, y) {
+    for (let i = 0; i < 14; i++) particles.push(new VowelParticle(x, y, targetHSL));
+  }
+
+  function spawnPattern(x, y, type) {
+    let c = col();
+    switch(type) {
+      case 'rings':
+        for (let r = 1; r <= 3; r++) particles.push(new RingParticle(x, y, c, r * 14)); break;
+      case 'spiral':
+        for (let i = 0; i < 18; i++) particles.push(new SpiralParticle(x, y, c, i)); break;
+      case 'wave':
+        for (let i = 0; i < 20; i++) particles.push(new WaveParticle(x, y, c, i)); break;
+      case 'burst':
+        for (let i = 0; i < 14; i++) particles.push(new BurstParticle(x, y, c)); break;
+      case 'dots':
+        for (let i = 0; i < 16; i++) particles.push(new DotParticle(x, y, c)); break;
+      case 'fan':
+        for (let i = 0; i < 12; i++) particles.push(new FanParticle(x, y, c, i)); break;
+      case 'lines':
+        for (let i = 0; i < 6; i++) particles.push(new LineParticle(x, y, c, i)); break;
+      case 'mandala':
+        for (let i = 0; i < 24; i++) particles.push(new MandalaParticle(x, y, c, i)); break;
+      case 'petals':
+        for (let i = 0; i < 8; i++) particles.push(new PetalParticle(x, y, c, i)); break;
+      case 'cross':
+        for (let i = 0; i < 4; i++) particles.push(new CrossParticle(x, y, c, i)); break;
+      case 'zigzag':
+        for (let i = 0; i < 12; i++) particles.push(new ZigzagParticle(x, y, c, i)); break;
+      case 'hatch':
+        for (let i = 0; i < 10; i++) particles.push(new HatchParticle(x, y, c, i)); break;
+      case 'nodes':
+        for (let i = 0; i < 8; i++) particles.push(new NodeParticle(x, y, c, i)); break;
+      case 'ticks':
+        for (let i = 0; i < 10; i++) particles.push(new TickParticle(x, y, c, i)); break;
+      case 'kite':
+        for (let i = 0; i < 6; i++) particles.push(new KiteParticle(x, y, c, i)); break;
+      case 'veil':
+        for (let i = 0; i < 20; i++) particles.push(new VeilParticle(x, y, c)); break;
+      case 'grid':
+        for (let i = 0; i < 9; i++) particles.push(new GridParticle(x, y, c, i)); break;
+      case 'aurora':
+        for (let i = 0; i < 11; i++) particles.push(new AuroraParticle(x, y, targetHSL, i)); break;
+      case 'orbit':
+        for (let i = 0; i < 10; i++) particles.push(new OrbitParticle(x, y, targetHSL, i)); break;
+      case 'stream':
+        for (let i = 0; i < 14; i++) particles.push(new StreamParticle(x, y, targetHSL, i)); break;
+      default:
+        for (let i = 0; i < 10; i++) particles.push(new DotParticle(x, y, c));
+    }
+  }
+
+  // ── Utility ──────────────────────────────────────────────────────────────────
+  function lerpAngle(a, b, t) {
+    let d = b - a;
+    while (d > 180) d -= 360;
+    while (d < -180) d += 360;
+    return a + d * t;
+  }
+
+  // ── Particle classes (identical to main project) ──────────────────────────────
+  class BaseParticle {
+    constructor(x, y, c) {
+      this.ox = x; this.oy = y; this.x = x; this.y = y;
+      this.col = { ...c };
+      this.life = 1.0;
+      this.decay = p.random(0.008, 0.016);
+    }
+    dead() { return this.life <= 0; }
+  }
+
+  class VowelParticle extends BaseParticle {
+    constructor(x, y, c) {
+      super(x, y, c);
+      this.angle = p.random(p.TWO_PI);
+      this.speed = p.random(0.5, 2.5);
+      this.r = p.random(2, 5);
+      this.decay = p.random(0.01, 0.022);
+    }
+    update() {
+      this.x += Math.cos(this.angle) * this.speed;
+      this.y += Math.sin(this.angle) * this.speed;
+      this.speed *= 0.96; this.life -= this.decay;
+    }
+    draw() {
+      p.noStroke();
+      p.fill(this.col.h, this.col.s, this.col.l + 10, this.life * 80);
+      p.ellipse(this.x, this.y, this.r * 2 * this.life);
+    }
+  }
+
+  class RingParticle extends BaseParticle {
+    constructor(x, y, c, radius) {
+      super(x, y, c); this.radius = radius; this.maxR = radius * 3.5; this.decay = 0.012;
+    }
+    update() { this.radius = p.lerp(this.radius, this.maxR, 0.04); this.life -= this.decay; }
+    draw() {
+      p.noFill(); p.stroke(this.col.h, this.col.s, this.col.l, this.life * 70);
+      p.strokeWeight(1); p.ellipse(this.ox, this.oy, this.radius * 2, this.radius * 2);
+    }
+  }
+
+  class SpiralParticle extends BaseParticle {
+    constructor(x, y, c, i) { super(x, y, c); this.t = i * 0.35; this.decay = 0.009; }
+    update() {
+      this.t += 0.06;
+      this.x = this.ox + Math.cos(this.t) * this.t * 4;
+      this.y = this.oy + Math.sin(this.t) * this.t * 4;
+      this.life -= this.decay;
+    }
+    draw() {
+      p.noStroke(); p.fill(this.col.h, this.col.s, this.col.l + 15, this.life * 75);
+      p.ellipse(this.x, this.y, 3);
+    }
+  }
+
+  class WaveParticle extends BaseParticle {
+    constructor(x, y, c, i) { super(x, y, c); this.offset = i * 8 - 80; this.t = 0; this.decay = 0.007; }
+    update() {
+      this.t += 0.08;
+      this.x = this.ox + this.offset + this.t * 2;
+      this.y = this.oy + Math.sin(this.t + this.offset * 0.1) * 18;
+      this.life -= this.decay;
+    }
+    draw() { p.noStroke(); p.fill(this.col.h, 75, 72, this.life * 65); p.ellipse(this.x, this.y, 4); }
+  }
+
+  class BurstParticle extends BaseParticle {
+    constructor(x, y, c) {
+      super(x, y, c); this.angle = p.random(p.TWO_PI); this.speed = p.random(1, 3); this.decay = 0.014;
+    }
+    update() {
+      this.x += Math.cos(this.angle) * this.speed; this.y += Math.sin(this.angle) * this.speed;
+      this.speed *= 0.94; this.life -= this.decay;
+    }
+    draw() {
+      p.stroke(this.col.h, this.col.s, this.col.l, this.life * 80); p.strokeWeight(1.5);
+      p.line(this.x, this.y, this.x - Math.cos(this.angle) * 8, this.y - Math.sin(this.angle) * 8);
+    }
+  }
+
+  class DotParticle extends BaseParticle {
+    constructor(x, y, c) {
+      super(x, y, c); this.dx = p.random(-35, 35); this.dy = p.random(-35, 35);
+      this.r = p.random(1.5, 4); this.decay = p.random(0.008, 0.018);
+    }
+    update() {
+      this.x = p.lerp(this.x, this.ox + this.dx, 0.05);
+      this.y = p.lerp(this.y, this.oy + this.dy, 0.05);
+      this.life -= this.decay;
+    }
+    draw() { p.noStroke(); p.fill(this.col.h, this.col.s, this.col.l, this.life * 75); p.ellipse(this.x, this.y, this.r * 2); }
+  }
+
+  class FanParticle extends BaseParticle {
+    constructor(x, y, c, i) {
+      super(x, y, c); this.angle = (i / 12) * Math.PI - Math.PI * 0.2;
+      this.r = 0; this.maxR = p.random(20, 55); this.decay = 0.011;
+    }
+    update() {
+      this.r = p.lerp(this.r, this.maxR, 0.06);
+      this.x = this.ox + Math.cos(this.angle) * this.r;
+      this.y = this.oy - Math.sin(this.angle) * this.r;
+      this.life -= this.decay;
+    }
+    draw() {
+      p.stroke(this.col.h, this.col.s, this.col.l + 10, this.life * 70);
+      p.strokeWeight(1.2); p.line(this.ox, this.oy, this.x, this.y);
+    }
+  }
+
+  class LineParticle extends BaseParticle {
+    constructor(x, y, c, i) { super(x, y, c); this.angle = (i / 6) * Math.PI; this.len = p.random(20, 60); this.decay = 0.009; }
+    update() { this.life -= this.decay; }
+    draw() {
+      p.stroke(this.col.h, this.col.s, this.col.l, this.life * 65); p.strokeWeight(1);
+      p.line(this.ox, this.oy, this.ox + Math.cos(this.angle) * this.len * this.life, this.oy + Math.sin(this.angle) * this.len * this.life);
+    }
+  }
+
+  class MandalaParticle extends BaseParticle {
+    constructor(x, y, c, i) { super(x, y, c); this.baseAngle = (i / 24) * p.TWO_PI; this.r = 0; this.maxR = 22; this.decay = 0.007; }
+    update() { this.r = p.lerp(this.r, this.maxR, 0.05); this.life -= this.decay; }
+    draw() {
+      p.noStroke(); p.fill(this.col.h, this.col.s, this.col.l + 5, this.life * 60);
+      p.ellipse(this.ox + Math.cos(this.baseAngle) * this.r, this.oy + Math.sin(this.baseAngle) * this.r, 3, 5);
+    }
+  }
+
+  class PetalParticle extends BaseParticle {
+    constructor(x, y, c, i) { super(x, y, c); this.baseAngle = (i / 8) * p.TWO_PI; this.t = 0; this.decay = 0.009; }
+    update() { this.t += 0.05; this.life -= this.decay; }
+    draw() {
+      let r = Math.sin(this.t) * 25;
+      p.noStroke(); p.fill(this.col.h, 80, 72, this.life * 65);
+      p.ellipse(this.ox + Math.cos(this.baseAngle) * r, this.oy + Math.sin(this.baseAngle) * r, 6 * this.life, 10 * this.life);
+    }
+  }
+
+  class CrossParticle extends BaseParticle {
+    constructor(x, y, c, i) { super(x, y, c); this.angle = (i / 4) * p.TWO_PI + p.PI / 4; this.len = 0; this.maxLen = p.random(18, 45); this.decay = 0.01; }
+    update() { this.len = p.lerp(this.len, this.maxLen, 0.07); this.life -= this.decay; }
+    draw() {
+      p.stroke(this.col.h, this.col.s, this.col.l + 15, this.life * 75); p.strokeWeight(1.5);
+      p.line(this.ox - Math.cos(this.angle) * this.len, this.oy - Math.sin(this.angle) * this.len,
+             this.ox + Math.cos(this.angle) * this.len, this.oy + Math.sin(this.angle) * this.len);
+    }
+  }
+
+  class ZigzagParticle extends BaseParticle {
+    constructor(x, y, c, i) { super(x, y, c); this.t = i * 0.5; this.decay = 0.009; }
+    update() {
+      this.t += 0.1;
+      this.x = this.ox + Math.sin(this.t * 3) * 20 + this.t * 5;
+      this.y = this.oy + this.t * 4 - 30;
+      this.life -= this.decay;
+    }
+    draw() { p.noStroke(); p.fill(this.col.h, 75, this.col.l, this.life * 70); p.ellipse(this.x, this.y, 3); }
+  }
+
+  class HatchParticle extends BaseParticle {
+    constructor(x, y, c, i) { super(x, y, c); this.offset = (i - 5) * 6; this.decay = 0.009; }
+    update() { this.life -= this.decay; }
+    draw() {
+      p.stroke(this.col.h, this.col.s, this.col.l, this.life * 55); p.strokeWeight(1);
+      p.line(this.ox + this.offset, this.oy - 15, this.ox + this.offset + 8, this.oy + 15);
+    }
+  }
+
+  class NodeParticle extends BaseParticle {
+    constructor(x, y, c, i) { super(x, y, c); this.angle = (i / 8) * p.TWO_PI; this.r = p.random(12, 30); this.decay = 0.008; }
+    update() { this.life -= this.decay; }
+    draw() {
+      let cx = this.ox + Math.cos(this.angle) * this.r, cy = this.oy + Math.sin(this.angle) * this.r;
+      p.stroke(this.col.h, this.col.s, this.col.l, this.life * 50); p.strokeWeight(0.8);
+      p.line(this.ox, this.oy, cx, cy);
+      p.noStroke(); p.fill(this.col.h, this.col.s, this.col.l + 20, this.life * 80); p.ellipse(cx, cy, 4);
+    }
+  }
+
+  class TickParticle extends BaseParticle {
+    constructor(x, y, c, i) { super(x, y, c); this.dx = (i - 5) * 8; this.decay = 0.011; }
+    update() { this.life -= this.decay; }
+    draw() {
+      p.stroke(this.col.h, this.col.s, this.col.l + 10, this.life * 65); p.strokeWeight(1.2);
+      p.line(this.ox + this.dx, this.oy - 8, this.ox + this.dx, this.oy + 8);
+    }
+  }
+
+  class KiteParticle extends BaseParticle {
+    constructor(x, y, c, i) { super(x, y, c); this.angle = (i / 6) * p.TWO_PI; this.t = 0; this.decay = 0.009; }
+    update() { this.t += 0.05; this.life -= this.decay; }
+    draw() {
+      let r = 10 + Math.sin(this.t) * 18;
+      let cx = this.ox + Math.cos(this.angle) * r, cy = this.oy + Math.sin(this.angle) * r;
+      p.noStroke(); p.fill(this.col.h, this.col.s, this.col.l, this.life * 65);
+      p.push(); p.translate(cx, cy); p.rotate(this.angle + this.t);
+      p.quad(0, -6, 5, 0, 0, 8, -5, 0); p.pop();
+    }
+  }
+
+  class VeilParticle extends BaseParticle {
+    constructor(x, y, c) {
+      super(x, y, c); this.dx = p.random(-60, 60); this.dy = p.random(-30, 30);
+      this.len = p.random(10, 40); this.angle = p.random(p.TWO_PI); this.decay = p.random(0.006, 0.012);
+    }
+    update() {
+      this.x = p.lerp(this.x, this.ox + this.dx, 0.03);
+      this.y = p.lerp(this.y, this.oy + this.dy, 0.03);
+      this.life -= this.decay;
+    }
+    draw() {
+      p.stroke(this.col.h, 40, 80, this.life * 40); p.strokeWeight(0.8);
+      p.line(this.x, this.y, this.x + Math.cos(this.angle) * this.len * this.life,
+             this.y + Math.sin(this.angle) * this.len * this.life);
+    }
+  }
+
+  class AuroraParticle extends BaseParticle {
+    constructor(x, y, col, i) {
+      super(x, y, col);
+      this.offsetY = (i - 5) * 6;
+      this.w = p.random(40, 120);
+      this.h = p.random(6, 14);
+      this.t = p.random(1000);
+      this.decay = 0.007;
+    }
+    update() {
+      this.t += 0.02;
+      this.x = this.ox + Math.sin(this.t * 0.7) * 25;
+      this.life -= this.decay;
+    }
+    draw() {
+      p.noStroke();
+      p.fill(this.col.h, this.col.s, this.col.l + 5, this.life * 45);
+      p.rect(this.x - this.w / 2, this.oy + this.offsetY, this.w, this.h * this.life);
+    }
+  }
+
+  class OrbitParticle extends BaseParticle {
+    constructor(x, y, col, i) {
+      super(x, y, col);
+      this.angle = p.random(p.TWO_PI);
+      this.radius = p.random(10, 40);
+      this.speed = p.random(0.02, 0.06);
+      this.size = p.random(2, 4);
+      this.decay = 0.01;
+    }
+    update() {
+      this.angle += this.speed;
+      this.x = this.ox + Math.cos(this.angle) * this.radius;
+      this.y = this.oy + Math.sin(this.angle) * this.radius;
+      this.radius *= 1.01;
+      this.life -= this.decay;
+    }
+    draw() {
+      p.noStroke();
+      p.fill(this.col.h, this.col.s, this.col.l + 10, this.life * 70);
+      p.ellipse(this.x, this.y, this.size * this.life);
+    }
+  }
+
+  class StreamParticle extends BaseParticle {
+    constructor(x, y, col, i) {
+      super(x, y, col);
+      this.x = x + p.random(-6, 6);
+      this.vy = p.random(1.5, 3.5);
+      this.len = p.random(25, 55);
+      this.decay = 0.012;
+    }
+    update() {
+      this.y += this.vy;
+      this.life -= this.decay;
+    }
+    draw() {
+      p.stroke(this.col.h, this.col.s, this.col.l, this.life * 60);
+      p.strokeWeight(1);
+      p.line(this.x, this.y, this.x, this.y + this.len * this.life);
+    }
+  }
+
+  class GridParticle extends BaseParticle {
+    constructor(x, y, c, i) {
+      super(x, y, c);
+      this.tx = x + (i % 3 - 1) * 14; this.ty = y + (Math.floor(i / 3) - 1) * 10; this.decay = 0.009;
+    }
+    update() { this.life -= this.decay; }
+    draw() {
+      p.noStroke(); p.fill(this.col.h, this.col.s, this.col.l, this.life * 60);
+      p.rect(this.tx - 3, this.ty - 3, 6 * this.life, 6 * this.life);
+    }
+  }
+};
+
+// ─── Boot the demo sketch ─────────────────────────────────────────────────────
+let demo = new p5(demoSketch);
+
+// ─── Wire up the input ────────────────────────────────────────────────────────
+const input = document.getElementById('demo-input');
+
+input.addEventListener('input', function(e) {
+  // Find what was just added (last char of current value)
+  let val = this.value;
+  if (val.length === 0) return;
+  let lastChar = val[val.length - 1];
+  demo.onChar(lastChar);
+});
+
+document.getElementById('clear-btn').addEventListener('click', function() {
+  input.value = '';
+  demo.clearCanvas();
+  input.focus();
+});
+
+// Auto-focus the input when the section is visible
+input.addEventListener('focus', () => {});
+</script>
+
+</body>
+</html>

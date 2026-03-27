@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
+<title>сказочки будут вечно</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+
+</head>
+<body>
+
+<div id="ui">
+  <div id="title-bar">
+    <h1>чувства давно остынут, сказочки будут вечно</h1>
+    <span id="quote">c. Мглистый заповедник</span>
+  </div>
+  <div id="controls">
+    <label id="file-label" for="file-input">Загрузить свой текст</label>
+    <input type="file" id="file-input" accept=".txt">
+    <div class="sep"></div>
+    <button class="btn" id="btn-demo">Demo</button>
+    <button class="btn" id="btn-pause">Пауза</button>
+    <button class="btn" id="btn-reset">Перезапустить</button>
+    <div class="sep"></div>
+    <div id="speed-wrap">
+      Скорость
+      <input type="range" id="speed-slider" min="1" max="12" value="4">
+    </div>
+    <div class="sep"></div>
+    <a class="btn" href="./index.html">О проекте</a>
+  </div>
+</div>
+
+<div id="status">загрузите текстовый файл или посмотрите демо</div>
+
+<script>
+const DEMO_TEXT = `полночь, как жидкий валиум, полночь, как грустный пони.
+
+как его раньше звали — к счастью, уже не помнят.
+к счастью, потом забудут — как он искал в подвалах
+заросли незабудок, принцев, крысят, нарвалов.
+
+как он ходил на стройку — битум искать и щебень;
+ставил силки на сойку, чтобы похитить щебет;
+часто ходил кладбищем — кости копать и доски,
+вечно больной и нищий, вечно худой и босый.
+
+знал, где бывают драки, знал, где цветут убийства —
+в серых листах тетради вел непрерывный список.
+зданий оплот дремучий воспринимал как святость.
+
+голод его не мучил, не донимала слякоть.
+холод его не трогал, не докучала жажда.
+
+тенью к нему на ноготь в полночь садился бражник,
+бражник шептал сто таин, трудно в которых верить:
+где закрывались ставни, где открывались двери,
+где выбивались окна — в каждом из них несчастье.
+полночь сверкала оком, будто бы соучастник.
+
+он хохотал по-зверски, руки-ножи расправив —
+тот, кто утратил сердце, тот, кто не знает правил,
+тот, кто когда-то умер, но возродился в недрах.
+
+брал свою сумку-сумрак, ручку-перо, пигменты,
+карандаши и ластик, чтобы сточить их вскоре —
+
+сказочник страшных сказок,
+страшных легенд.
+
+историй.
+
+*
+там, где отцвел репейник, мусора, грязи — роща.
+он продавал за пенни страшных чудовищ мощи.
+то, что карман оттянет — кости, хребет, присоски.
+
+он торговал смертями
+и выходило сносно.
+
+чудищ глазища, пальцы, ворохи черной шерсти —
+у ночника-скитальца
+не иссякали жертвы:
+
+"сказку, где блещут серпы,
+ту, где танцуют польку."
+
+жизни огонь померкнет,
+сказочный миф — нисколько.
+
+"сказку про дом, про церковь,
+про туесок, про репку."
+
+когти у сказок — цепки,
+корни у сказок — крепки.
+
+"сказочка на ночь сыну — про каравай и печку."
+
+чувства давно остынут,
+сказочки будут вечно.
+
+*
+мэр наш как будто спятил: вместо репья — газоны.
+выросли все ребята,
+город остался сонным.
+
+но, как и раньше, в парке слышится — правда, реже, —
+как этот странный парень
+тащит свою тележку.
+
+с. Мглистый заповедник`;
+
+// ---- Vowel color palettes (ru) ----
+const VOWEL_PALETTES = {
+  'а': { h: 272, s: 60, l: 74 },  // лавандовый
+  'е': { h: 142, s: 70, l: 52 },  // зеленый
+  'ё': { h: 150, s: 67, l: 72 },  // зеленый
+  'и': { h: 210, s: 80, l: 65 },  // голубой
+  'о': { h: 35,  s: 100, l: 56 },  // оранжевый
+  'у': { h: 49, s: 89, l: 60 },  // желтый
+  'ы': { h: 218, s: 77, l: 42 },  // темно синий
+  'э': { h: 355, s: 78, l: 62 },  // караловый
+  'ю': { h: 0, s: 95, l: 47 },  // красный
+  'я': { h: 301, s: 59, l: 60 },  // розовый
+  'ь': { h: 0, s: 100, l: 100 },  // белый
+  'ъ': { h: 0, s: 0, l: 56 },  // серый
+};
+
+// ---- Consonant pattern types (ru) ----
+const CONSONANT_PATTERNS = {
+  'б': 'burst', 'в': 'veil', 'г': 'grid',
+  'д': 'dots', 'з': 'zigzag', 'й': 'aurora',
+  'к': 'kite', 'л': 'lines', 'м': 'mandala',
+  'н': 'nodes', 'п': 'petals', 'р': 'rings',
+  'с': 'spiral', 'т': 'orbit', 'ф': 'fan',
+  'х': 'cross', 'ц': 'stream', 'ч': 'hatch',
+  'ш': 'ticks', 'ж': 'wave', 'щ': 'ticks',
+};
+
+let sketch = function(p) {
+  let particles = [];
+  let letterTokens = [];
+  let currentIndex = 0;
+  let stepTimer = 0;
+  let stepInterval = 8; // frames per character
+  let running = false;
+  let paused = false;
+
+  let currentHSL = { h: 45, s: 70, l: 65 };
+  let targetHSL  = { h: 45, s: 70, l: 65 };
+
+  let textX = 60, textY = 110;
+  let lineH = 28;
+  let charW = 13;
+  let maxLineW;
+
+  // Camera / auto-scroll
+  let camY = 0;
+  let targetCamY = 0;
+  let totalTextHeight = 0;
+
+  // Rhyme tracking
+  let lineEnds = [];
+  let rhymeFlash = 0;
+
+  // Rhythm tracking
+  let wordLengths = [];
+  let rhythmPulse = 0;
+
+  p.setup = function() {
+    let cnv = p.createCanvas(p.windowWidth, p.windowHeight);
+    cnv.parent(document.body);
+    p.colorMode(p.HSL, 360, 100, 100, 100);
+    p.textFont('Georgia');
+    p.textSize(15);
+    maxLineW = p.width - textX * 2;
+    p.background(10, 10, 15);
+  };
+
+  p.windowResized = function() {
+    p.resizeCanvas(p.windowWidth, p.windowHeight);
+    maxLineW = p.width - textX * 2;
+  };
+
+  function parseText(raw) {
+    letterTokens = [];
+    particles = [];
+    currentIndex = 0;
+    lineEnds = [];
+    wordLengths = [];
+    textX = 60;
+    textY = 110;
+    camY = 0;
+    targetCamY = 0;
+
+    let x = textX, y = textY;
+    let wordBuf = '';
+
+    for (let i = 0; i < raw.length; i++) {
+      let ch = raw[i];
+      if (ch === '\n') {
+        if (wordBuf.length > 0) {
+          lineEnds.push(getPhonemeEnd(wordBuf));
+          wordLengths.push(wordBuf.length);
+          wordBuf = '';
+        }
+        x = textX;
+        y += lineH;
+        letterTokens.push({ ch: '\n', x: x, y: y, drawn: false, visible: false });
+        continue;
+      }
+      if (ch === ' ') {
+        if (wordBuf.length > 0) {
+          wordLengths.push(wordBuf.length);
+          wordBuf = '';
+        }
+        x += charW * 0.55;
+        letterTokens.push({ ch: ' ', x: x, y: y, drawn: false, visible: false });
+        continue;
+      }
+      if (x > textX + maxLineW) {
+        x = textX;
+        y += lineH;
+      }
+      wordBuf += ch;
+      letterTokens.push({ ch: ch, x: x, y: y, drawn: false, visible: false });
+      x += p.textWidth(ch) + 0.5;
+    }
+    if (wordBuf.length > 0) {
+      lineEnds.push(getPhonemeEnd(wordBuf));
+      wordLengths.push(wordBuf.length);
+    }
+
+    totalTextHeight = y + lineH * 2;
+    running = true;
+    paused = false;
+    document.getElementById('status').textContent =
+      `подготавливаем ${letterTokens.length} букв…`;
+  }
+
+function getPhonemeEnd(word) {
+  let clean = word
+    .toLowerCase()
+    .replace(/[^а-яё]/g, '');
+  if (clean.length <= 3) return clean;
+  return clean.slice(-3);
+}
+
+  p.draw = function() {
+    // Camera follow
+    camY = p.lerp(camY, targetCamY, 0.05);
+
+    // Background fade
+    p.fill(10, 10, 15, 6);
+    p.noStroke();
+    p.rect(0, 0, p.width, p.height);
+
+    // World transform
+    p.push();
+    p.translate(0, -camY);
+
+    // Fixed hue behavior: hue = target, s/l плавно
+    currentHSL.h = targetHSL.h;
+    currentHSL.s = p.lerp(currentHSL.s, targetHSL.s, 0.06);
+    currentHSL.l = p.lerp(currentHSL.l, targetHSL.l, 0.06);
+
+    // Particles
+    for (let i = particles.length - 1; i >= 0; i--) {
+      let pt = particles[i];
+      pt.update();
+      pt.draw();
+      if (pt.dead()) particles.splice(i, 1);
+    }
+
+    // Text
+    p.textFont('Georgia');
+    p.textSize(15);
+    for (let tk of letterTokens) {
+      if (tk.visible && tk.ch !== ' ' && tk.ch !== '\n') {
+        p.noStroke();
+        let a = p.min(100, tk.age * 3);
+        p.fill(38, 20, 88, a);
+        p.text(tk.ch, tk.x, tk.y);
+        tk.age = (tk.age || 0) + 1;
+      }
+    }
+
+    // Advance text
+    if (running && !paused) {
+      stepTimer++;
+      let interval = Math.max(1, Math.round(16 / stepInterval));
+      if (stepTimer >= interval) {
+        stepTimer = 0;
+        advanceChar();
+      }
+    }
+
+    p.pop();
+
+    // Rhyme flash in screen space
+    if (rhymeFlash > 0) {
+      p.noFill();
+      p.stroke(currentHSL.h, 90, 85, rhymeFlash * 0.4);
+      p.strokeWeight(1);
+      p.ellipse(
+        p.width / 2,
+        p.height / 2,
+        p.width * 0.7 + (1 - rhymeFlash) * 200,
+        p.height * 0.7 + (1 - rhymeFlash) * 200
+      );
+      rhymeFlash = p.max(0, rhymeFlash - 0.025);
+    }
+
+    if (running && currentIndex >= letterTokens.length) {
+      running = false;
+      document.getElementById('status').textContent =
+        'чувства остыли, история осталась';
+    }
+  };
+
+  function advanceChar() {
+    if (currentIndex >= letterTokens.length) return;
+
+    let tk = letterTokens[currentIndex];
+    tk.visible = true;
+    tk.age = 0;
+    currentIndex++;
+
+    let ch = tk.ch.toLowerCase();
+    let x = tk.x, y = tk.y;
+
+    // Auto-scroll
+    let screenY = y - camY;
+    let scrollThreshold = p.height * 0.62;
+    if (screenY > scrollThreshold) {
+      targetCamY = y - scrollThreshold;
+    }
+
+    if (ch === '\n' || ch === ' ' || ch === undefined) return;
+
+    // Vowel → target palette (русские буквы)
+    if ('аеёиоуыэюяьъ'.includes(ch)) {
+      let pal = VOWEL_PALETTES[ch];
+      if (pal) {
+        targetHSL = { ...pal };
+      }
+      spawnVowelBloom(x, y, ch);
+    } else {
+      let pType = CONSONANT_PATTERNS[ch] || 'scatter';
+      spawnPattern(x, y, pType);
+    }
+
+    // Rhythm
+    let recentLengths = wordLengths.slice(-4);
+    if (recentLengths.length >= 2) {
+      let diff = Math.abs(
+        recentLengths[recentLengths.length - 1] -
+        recentLengths[recentLengths.length - 2]
+      );
+      if (diff <= 1) rhythmPulse = 1;
+    }
+
+    // Rhyme
+    if (lineEnds.length >= 2) {
+      let last = lineEnds[lineEnds.length - 1];
+      let prev = lineEnds[lineEnds.length - 2];
+      if (last && prev && last === prev && last.length > 0) {
+        rhymeFlash = 1;
+        spawnRhymeBurst(x, y);
+      }
+    }
+  }
+
+  function spawnVowelBloom(x, y, vowel) {
+    let count = { a:12, e:10, i:8, o:14, u:9 }[vowel] || 10;
+    for (let i = 0; i < count; i++) {
+      particles.push(new VowelParticle(x, y, targetHSL));
+    }
+  }
+
+  function spawnRhymeBurst(x, y) {
+    for (let i = 0; i < 22; i++) {
+      particles.push(new RhymeParticle(x, y, targetHSL));
+    }
+    rhymeFlash = 1;
+  }
+
+  function spawnPattern(x, y, type) {
+    let col = { ...targetHSL };
+    switch(type) {
+      case 'rings':
+        for (let r = 1; r <= 3; r++)
+          particles.push(new RingParticle(x, y, col, r * 14));
+        break;
+      case 'spiral':
+        for (let i = 0; i < 18; i++)
+          particles.push(new SpiralParticle(x, y, col, i));
+        break;
+      case 'wave':
+        for (let i = 0; i < 20; i++)
+          particles.push(new WaveParticle(x, y, col, i));
+        break;
+      case 'burst':
+        for (let i = 0; i < 14; i++)
+          particles.push(new BurstParticle(x, y, col));
+        break;
+      case 'dots':
+        for (let i = 0; i < 16; i++)
+          particles.push(new DotParticle(x, y, col));
+        break;
+      case 'fan':
+        for (let i = 0; i < 12; i++)
+          particles.push(new FanParticle(x, y, col, i));
+        break;
+      case 'lines':
+        for (let i = 0; i < 6; i++)
+          particles.push(new LineParticle(x, y, col, i));
+        break;
+      case 'mandala':
+        for (let i = 0; i < 24; i++)
+          particles.push(new MandalaParticle(x, y, col, i));
+        break;
+      case 'petals':
+        for (let i = 0; i < 8; i++)
+          particles.push(new PetalParticle(x, y, col, i));
+        break;
+      case 'cross':
+        for (let i = 0; i < 4; i++)
+          particles.push(new CrossParticle(x, y, col, i));
+        break;
+      case 'zigzag':
+        for (let i = 0; i < 12; i++)
+          particles.push(new ZigzagParticle(x, y, col, i));
+        break;
+      case 'hatch':
+        for (let i = 0; i < 10; i++)
+          particles.push(new HatchParticle(x, y, col, i));
+        break;
+      case 'nodes':
+        for (let i = 0; i < 8; i++)
+          particles.push(new NodeParticle(x, y, col, i));
+        break;
+      case 'ticks':
+        for (let i = 0; i < 10; i++)
+          particles.push(new TickParticle(x, y, col, i));
+        break;
+      case 'kite':
+        for (let i = 0; i < 6; i++)
+          particles.push(new KiteParticle(x, y, col, i));
+        break;
+      case 'veil':
+        for (let i = 0; i < 20; i++)
+          particles.push(new VeilParticle(x, y, col));
+        break;
+      case 'grid':
+        for (let i = 0; i < 9; i++)
+          particles.push(new GridParticle(x, y, col, i));
+        break;
+      case 'aurora':
+        for (let i = 0; i < 11; i++)
+          particles.push(new AuroraParticle(x, y, targetHSL, i));
+        break;
+      case 'orbit':
+        for (let i = 0; i < 10; i++)
+          particles.push(new OrbitParticle(x, y, targetHSL, i));
+        break;
+      case 'stream':
+        for (let i = 0; i < 14; i++)
+          particles.push(new StreamParticle(x, y, targetHSL, i));
+        break;
+      
+      default:
+        for (let i = 0; i < 10; i++)
+          particles.push(new DotParticle(x, y, col));
+    }
+  }
+
+  // ─── Particle classes ─────────────────────
+
+  class BaseParticle {
+    constructor(x, y, col) {
+      this.ox = x; this.oy = y;
+      this.x = x; this.y = y;
+      this.col = { ...col };
+      this.life = 1.0;
+      this.decay = p.random(0.008, 0.016);
+    }
+    dead() { return this.life <= 0; }
+  }
+
+  class VowelParticle extends BaseParticle {
+    constructor(x, y, col) {
+      super(x, y, col);
+      this.angle = p.random(p.TWO_PI);
+      this.speed = p.random(0.5, 2.5);
+      this.r = p.random(2, 5);
+      this.decay = p.random(0.01, 0.022);
+    }
+    update() {
+      this.x += Math.cos(this.angle) * this.speed;
+      this.y += Math.sin(this.angle) * this.speed;
+      this.speed *= 0.96;
+      this.life -= this.decay;
+    }
+    draw() {
+      p.noStroke();
+      p.fill(this.col.h, this.col.s, this.col.l + 10, this.life * 80);
+      p.ellipse(this.x, this.y, this.r * 2 * this.life);
+    }
+  }
+
+  class RhymeParticle extends BaseParticle {
+    constructor(x, y, col) {
+      super(x, y, col);
+      this.angle = p.random(p.TWO_PI);
+      this.r = p.random(30, 120);
+      this.speed = p.random(0.02, 0.07);
+      this.decay = 0.008;
+      this.size = p.random(1.5, 4);
+    }
+    update() {
+      this.angle += this.speed;
+      this.x = this.ox + Math.cos(this.angle) * this.r;
+      this.y = this.oy + Math.sin(this.angle) * this.r * 0.5;
+      this.r *= 1.01;
+      this.life -= this.decay;
+    }
+    draw() {
+      p.noStroke();
+      p.fill(this.col.h, 90, 85, this.life * 90);
+      p.ellipse(this.x, this.y, this.size * this.life * 3);
+    }
+  }
+
+  class RingParticle extends BaseParticle {
+    constructor(x, y, col, radius) {
+      super(x, y, col);
+      this.radius = radius;
+      this.maxR = radius * 3.5;
+      this.decay = 0.012;
+    }
+    update() {
+      this.radius = p.lerp(this.radius, this.maxR, 0.04);
+      this.life -= this.decay;
+    }
+    draw() {
+      p.noFill();
+      p.stroke(this.col.h, this.col.s, this.col.l, this.life * 70);
+      p.strokeWeight(1);
+      p.ellipse(this.ox, this.oy, this.radius * 2, this.radius * 2);
+    }
+  }
+
+  class SpiralParticle extends BaseParticle {
+    constructor(x, y, col, i) {
+      super(x, y, col);
+      this.t = i * 0.35;
+      this.decay = 0.009;
+    }
+    update() {
+      this.t += 0.06;
+      this.x = this.ox + Math.cos(this.t) * this.t * 4;
+      this.y = this.oy + Math.sin(this.t) * this.t * 4;
+      this.life -= this.decay;
+    }
+    draw() {
+      p.noStroke();
+      p.fill(this.col.h, this.col.s, this.col.l + 15, this.life * 75);
+      p.ellipse(this.x, this.y, 3);
+    }
+  }
+
+  class WaveParticle extends BaseParticle {
+    constructor(x, y, col, i) {
+      super(x, y, col);
+      this.offset = i * 8 - 80;
+      this.t = 0;
+      this.decay = 0.007;
+    }
+    update() {
+      this.t += 0.08;
+      this.x = this.ox + this.offset + this.t * 2;
+      this.y = this.oy + Math.sin(this.t + this.offset * 0.1) * 18;
+      this.life -= this.decay;
+    }
+    draw() {
+      p.noStroke();
+      p.fill(this.col.h, 75, 72, this.life * 65);
+      p.ellipse(this.x, this.y, 4, 4);
+    }
+  }
+
+  class BurstParticle extends BaseParticle {
+    constructor(x, y, col) {
+      super(x, y, col);
+      this.angle = p.random(p.TWO_PI);
+      this.len = p.random(15, 50);
+      this.speed = p.random(1, 3);
+      this.decay = 0.014;
+    }
+    update() {
+      this.x += Math.cos(this.angle) * this.speed;
+      this.y += Math.sin(this.angle) * this.speed;
+      this.speed *= 0.94;
+      this.life -= this.decay;
+    }
+    draw() {
+      p.stroke(this.col.h, this.col.s, this.col.l, this.life * 80);
+      p.strokeWeight(1.5);
+      p.line(
+        this.x, this.y,
+        this.x - Math.cos(this.angle) * 8,
+        this.y - Math.sin(this.angle) * 8
+      );
+    }
+  }
+
+  class DotParticle extends BaseParticle {
+    constructor(x, y, col) {
+      super(x, y, col);
+      this.dx = p.random(-35, 35);
+      this.dy = p.random(-35, 35);
+      this.r = p.random(1.5, 4);
+      this.decay = p.random(0.008, 0.018);
+    }
+    update() {
+      this.x = p.lerp(this.x, this.ox + this.dx, 0.05);
+      this.y = p.lerp(this.y, this.oy + this.dy, 0.05);
+      this.life -= this.decay;
+    }
+    draw() {
+      p.noStroke();
+      p.fill(this.col.h, this.col.s, this.col.l, this.life * 75);
+      p.ellipse(this.x, this.y, this.r * 2);
+    }
+  }
+
+  class FanParticle extends BaseParticle {
+    constructor(x, y, col, i) {
+      super(x, y, col);
+      this.angle = (i / 12) * Math.PI - Math.PI * 0.2;
+      this.r = 0;
+      this.maxR = p.random(20, 55);
+      this.decay = 0.011;
+    }
+    update() {
+      this.r = p.lerp(this.r, this.maxR, 0.06);
+      this.x = this.ox + Math.cos(this.angle) * this.r;
+      this.y = this.oy - Math.sin(this.angle) * this.r;
+      this.life -= this.decay;
+    }
+    draw() {
+      p.stroke(this.col.h, this.col.s, this.col.l + 10, this.life * 70);
+      p.strokeWeight(1.2);
+      p.line(this.ox, this.oy, this.x, this.y);
+    }
+  }
+
+  class LineParticle extends BaseParticle {
+    constructor(x, y, col, i) {
+      super(x, y, col);
+      this.angle = (i / 6) * Math.PI;
+      this.len = p.random(20, 60);
+      this.decay = 0.009;
+    }
+    update() { this.life -= this.decay; }
+    draw() {
+      p.stroke(this.col.h, this.col.s, this.col.l, this.life * 65);
+      p.strokeWeight(1);
+      let ex = this.ox + Math.cos(this.angle) * this.len * this.life;
+      let ey = this.oy + Math.sin(this.angle) * this.len * this.life;
+      p.line(this.ox, this.oy, ex, ey);
+    }
+  }
+
+  class MandalaParticle extends BaseParticle {
+    constructor(x, y, col, i) {
+      super(x, y, col);
+      this.baseAngle = (i / 24) * p.TWO_PI;
+      this.r = 0;
+      this.maxR = 22;
+      this.decay = 0.007;
+    }
+    update() {
+      this.r = p.lerp(this.r, this.maxR, 0.05);
+      this.life -= this.decay;
+    }
+    draw() {
+      p.noStroke();
+      p.fill(this.col.h, this.col.s, this.col.l + 5, this.life * 60);
+      let cx = this.ox + Math.cos(this.baseAngle) * this.r;
+      let cy = this.oy + Math.sin(this.baseAngle) * this.r;
+      p.ellipse(cx, cy, 3, 5);
+    }
+  }
+
+  class PetalParticle extends BaseParticle {
+    constructor(x, y, col, i) {
+      super(x, y, col);
+      this.baseAngle = (i / 8) * p.TWO_PI;
+      this.t = 0;
+      this.decay = 0.009;
+    }
+    update() {
+      this.t += 0.05;
+      this.life -= this.decay;
+    }
+    draw() {
+      let r = Math.sin(this.t) * 25;
+      let cx = this.ox + Math.cos(this.baseAngle) * r;
+      let cy = this.oy + Math.sin(this.baseAngle) * r;
+      p.noStroke();
+      p.fill(this.col.h, 80, 72, this.life * 65);
+      p.ellipse(cx, cy, 6 * this.life, 10 * this.life);
+    }
+  }
+
+  class CrossParticle extends BaseParticle {
+    constructor(x, y, col, i) {
+      super(x, y, col);
+      this.angle = (i / 4) * p.TWO_PI + p.PI / 4;
+      this.len = 0;
+      this.maxLen = p.random(18, 45);
+      this.decay = 0.01;
+    }
+    update() {
+      this.len = p.lerp(this.len, this.maxLen, 0.07);
+      this.life -= this.decay;
+    }
+    draw() {
+      p.stroke(this.col.h, this.col.s, this.col.l + 15, this.life * 75);
+      p.strokeWeight(1.5);
+      p.line(
+        this.ox - Math.cos(this.angle) * this.len,
+        this.oy - Math.sin(this.angle) * this.len,
+        this.ox + Math.cos(this.angle) * this.len,
+        this.oy + Math.sin(this.angle) * this.len
+      );
+    }
+  }
+
+  class ZigzagParticle extends BaseParticle {
+    constructor(x, y, col, i) {
+      super(x, y, col);
+      this.t = i * 0.5;
+      this.decay = 0.009;
+    }
+    update() {
+      this.t += 0.1;
+      this.x = this.ox + (Math.sin(this.t * 3) * 20) + this.t * 5;
+      this.y = this.oy + this.t * 4 - 30;
+      this.life -= this.decay;
+    }
+    draw() {
+      p.noStroke();
+      p.fill(this.col.h, 75, this.col.l, this.life * 70);
+      p.ellipse(this.x, this.y, 3);
+    }
+  }
+
+  class HatchParticle extends BaseParticle {
+    constructor(x, y, col, i) {
+      super(x, y, col);
+      this.offset = (i - 5) * 6;
+      this.decay = 0.009;
+    }
+    update() { this.life -= this.decay; }
+    draw() {
+      p.stroke(this.col.h, this.col.s, this.col.l, this.life * 55);
+      p.strokeWeight(1);
+      p.line(
+        this.ox + this.offset, this.oy - 15,
+        this.ox + this.offset + 8, this.oy + 15
+      );
+    }
+  }
+
+  class NodeParticle extends BaseParticle {
+    constructor(x, y, col, i) {
+      super(x, y, col);
+      this.angle = (i / 8) * p.TWO_PI;
+      this.r = p.random(12, 30);
+      this.decay = 0.008;
+    }
+    update() { this.life -= this.decay; }
+    draw() {
+      let cx = this.ox + Math.cos(this.angle) * this.r;
+      let cy = this.oy + Math.sin(this.angle) * this.r;
+      p.stroke(this.col.h, this.col.s, this.col.l, this.life * 50);
+      p.strokeWeight(0.8);
+      p.line(this.ox, this.oy, cx, cy);
+      p.noStroke();
+      p.fill(this.col.h, this.col.s, this.col.l + 20, this.life * 80);
+      p.ellipse(cx, cy, 4);
+    }
+  }
+
+  class TickParticle extends BaseParticle {
+    constructor(x, y, col, i) {
+      super(x, y, col);
+      this.dx = (i - 5) * 8;
+      this.decay = 0.011;
+    }
+    update() { this.life -= this.decay; }
+    draw() {
+      p.stroke(this.col.h, this.col.s, this.col.l + 10, this.life * 65);
+      p.strokeWeight(1.2);
+      p.line(this.ox + this.dx, this.oy - 8, this.ox + this.dx, this.oy + 8);
+    }
+  }
+
+  class KiteParticle extends BaseParticle {
+    constructor(x, y, col, i) {
+      super(x, y, col);
+      this.angle = (i / 6) * p.TWO_PI;
+      this.t = 0;
+      this.decay = 0.009;
+    }
+    update() {
+      this.t += 0.05;
+      this.life -= this.decay;
+    }
+    draw() {
+      let r = 10 + Math.sin(this.t) * 18;
+      let cx = this.ox + Math.cos(this.angle) * r;
+      let cy = this.oy + Math.sin(this.angle) * r;
+      p.noStroke();
+      p.fill(this.col.h, this.col.s, this.col.l, this.life * 65);
+      p.push();
+      p.translate(cx, cy);
+      p.rotate(this.angle + this.t);
+      p.quad(0, -6, 5, 0, 0, 8, -5, 0);
+      p.pop();
+    }
+  }
+
+  class VeilParticle extends BaseParticle {
+    constructor(x, y, col) {
+      super(x, y, col);
+      this.dx = p.random(-60, 60);
+      this.dy = p.random(-30, 30);
+      this.len = p.random(10, 40);
+      this.angle = p.random(p.TWO_PI);
+      this.decay = p.random(0.006, 0.012);
+    }
+    update() {
+      this.x = p.lerp(this.x, this.ox + this.dx, 0.03);
+      this.y = p.lerp(this.y, this.oy + this.dy, 0.03);
+      this.life -= this.decay;
+    }
+    draw() {
+      p.stroke(this.col.h, 40, 80, this.life * 40);
+      p.strokeWeight(0.8);
+      p.line(
+        this.x, this.y,
+        this.x + Math.cos(this.angle) * this.len * this.life,
+        this.y + Math.sin(this.angle) * this.len * this.life
+      );
+    }
+  }
+
+  class AuroraParticle extends BaseParticle {
+    constructor(x, y, col, i) {
+      super(x, y, col);
+      this.offsetY = (i - 5) * 6;
+      this.w = p.random(40, 120);
+      this.h = p.random(6, 14);
+      this.t = p.random(1000);
+      this.decay = 0.007;
+    }
+    update() {
+      this.t += 0.02;
+      this.x = this.ox + Math.sin(this.t * 0.7) * 25;
+      this.life -= this.decay;
+    }
+    draw() {
+      p.noStroke();
+      p.fill(this.col.h, this.col.s, this.col.l + 5, this.life * 45);
+      p.rect(this.x - this.w / 2, this.oy + this.offsetY, this.w, this.h * this.life);
+    }
+  }
+
+  class OrbitParticle extends BaseParticle {
+    constructor(x, y, col, i) {
+      super(x, y, col);
+      this.angle = p.random(p.TWO_PI);
+      this.radius = p.random(10, 40);
+      this.speed = p.random(0.02, 0.06);
+      this.size = p.random(2, 4);
+      this.decay = 0.01;
+    }
+    update() {
+      this.angle += this.speed;
+      this.x = this.ox + Math.cos(this.angle) * this.radius;
+      this.y = this.oy + Math.sin(this.angle) * this.radius;
+      this.radius *= 1.01;
+      this.life -= this.decay;
+    }
+    draw() {
+      p.noStroke();
+      p.fill(this.col.h, this.col.s, this.col.l + 10, this.life * 70);
+      p.ellipse(this.x, this.y, this.size * this.life);
+    }
+  }
+
+  class StreamParticle extends BaseParticle {
+    constructor(x, y, col, i) {
+      super(x, y, col);
+      this.x = x + p.random(-6, 6);
+      this.vy = p.random(1.5, 3.5);
+      this.len = p.random(25, 55);
+      this.decay = 0.012;
+    }
+    update() {
+      this.y += this.vy;
+      this.life -= this.decay;
+    }
+    draw() {
+      p.stroke(this.col.h, this.col.s, this.col.l, this.life * 60);
+      p.strokeWeight(1);
+      p.line(this.x, this.y, this.x, this.y + this.len * this.life);
+    }
+  }
+
+  class GridParticle extends BaseParticle {
+    constructor(x, y, col, i) {
+      super(x, y, col);
+      let gx = (i % 3) - 1;
+      let gy = Math.floor(i / 3) - 1;
+      this.tx = x + gx * 14;
+      this.ty = y + gy * 10;
+      this.decay = 0.009;
+    }
+    update() { this.life -= this.decay; }
+    draw() {
+      p.noStroke();
+      p.fill(this.col.h, this.col.s, this.col.l, this.life * 60);
+      p.rect(this.tx - 3, this.ty - 3, 6 * this.life, 6 * this.life);
+    }
+  }
+
+  // ─── External interface ─────────────────────
+
+  p.loadUserText = function(text) {
+    p.background(10, 10, 15);
+    parseText(text);
+  };
+
+  p.togglePause = function() {
+    paused = !paused;
+    return paused;
+  };
+
+  p.reset = function() {
+    particles = [];
+    letterTokens = [];
+    currentIndex = 0;
+    running = false;
+    camY = 0;
+    targetCamY = 0;
+    p.background(10, 10, 15);
+    document.getElementById('status').textContent =
+      'загрузите текстовый файл или посмотрите демонстрационную поэму';
+  };
+
+  p.setSpeed = function(v) {
+    stepInterval = parseInt(v);
+  };
+};
+
+// ─── Boot ─────────────────────────────────────
+
+let myp5 = new p5(sketch);
+
+document.getElementById('file-input').addEventListener('change', function(e) {
+  let file = e.target.files[0];
+  if (!file) return;
+  let reader = new FileReader();
+  reader.onload = function(ev) {
+    myp5.loadUserText(ev.target.result);
+    document.getElementById('status').textContent =
+      `загружено: ${file.name}`;
+  };
+  reader.readAsText(file);
+});
+
+document.getElementById('btn-demo').addEventListener('click', function() {
+  myp5.loadUserText(DEMO_TEXT);
+  document.getElementById('status').textContent =
+    'показываем демо — полночь, как жидкий валиум, полночь, как грустный пони';
+});
+
+document.getElementById('btn-pause').addEventListener('click', function() {
+  let paused = myp5.togglePause();
+  this.textContent = paused ? 'Продолжить' : 'Пауза';
+  this.classList.toggle('active', paused);
+});
+
+document.getElementById('btn-reset').addEventListener('click', function() {
+  myp5.reset();
+  document.getElementById('btn-pause').textContent = 'Пауза';
+  document.getElementById('btn-pause').classList.remove('active');
+});
+
+document.getElementById('speed-slider').addEventListener('input', function() {
+  myp5.setSpeed(this.value);
+});
+</script>
+</body>
+</html>
